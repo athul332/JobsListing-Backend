@@ -17,6 +17,11 @@ const authRouter = require("./routes/login");
 const { authenticationMiddleware } = require("./middleware/auth");
 const connectDB = require("./db/connect");
 
+//swagger
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
+const swaggerDocument = YAML.load("./swagger.yaml");
+
 // middleware
 
 app.use(
@@ -29,9 +34,10 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.use(xss());
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   res.send('<h1>Jobs API</h1><a href="/api-docs">Documentation</a>');
 });
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticationMiddleware, jobsRouter);
 app.use(notFoundMiddleware);
